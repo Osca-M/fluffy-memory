@@ -1,39 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="">
     <head>
         <title>Real time streaming</title>
-        <script src="https://d3js.org/d3-array.v2.min.js"></script>
-        <script src="https://d3js.org/d3-color.v1.min.js"></script>
-        <script src="https://d3js.org/d3-format.v1.min.js"></script>
-        <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
-        <script src="https://d3js.org/d3-time.v1.min.js"></script>
-        <script src="https://d3js.org/d3-time-format.v2.min.js"></script>
-        <script src="https://d3js.org/d3-scale.v3.min.js"></script>
-        <script src="https://d3js.org/d3-selection.v1.min.js"></script>
-        <script src="https://d3js.org/d3-axis.v1.min.js"></script>
-        <script src="https://huww98.github.io/TimeChart/dist/timechart.min.js"></script>
-        <style>
-            #chart { width: 100%; height: 300px; margin-top: 300px; }
-        </style>
+        <script src="https://cdn.plot.ly/plotly-2.6.3.min.js"></script>
     </head>
     <body>
-        <div id="chart"></div>
-        <script>
-            const el = document.getElementById('chart');
-            const dataPoints = [];
-            const chart = new TimeChart(el, {
-                series: [{ data: dataPoints, name: 'Real-time measurement streaming', color: 'darkblue' }],
-                realTime: true,
-                xRange: { min: 0, max: 200 },
-            });
-            const ws = new WebSocket("ws://127.0.0.1:8000/ws");
-            let x = 0;
-            ws.onmessage = function(event) {
-                const measurement = JSON.parse(event.data);
-                x += 1
-                dataPoints.push({x, y: measurement.value});
-                chart.update();
-            };
-        </script>
+        <div id="graph" style="width:90%;height:250px; margin-top: 300px;">
+            <script>
+                graph = document.getElementById('graph');
+                const ws = new WebSocket('ws://localhost:8000/ws');
+                ws.onmessage = function (event) {
+                    let measurement = JSON.parse(event.data);
+                    Plotly.newPlot(
+                        graph,
+                        [
+                            {
+                                y: [measurement.value],
+                                x: cnt,
+                                type: 'line',
+                                line: {color: '#80CAF6'}
+                            }
+                        ], {
+                            margin: { t: 0 } }, {showSendToCloud:true}
+                    );
+                    let cnt = 0;
+                    setInterval(function () {
+                        Plotly.extendTraces(graph, {y: [[measurement.value]]}, [0]);
+                        cnt++;
+                        if (cnt > 1000) {
+                            Plotly.relayout(
+                                graph,
+                                {
+                                    xaxis: {
+                                        range: [cnt-1000, cnt]
+                                    }
+                                }
+                            );
+                        }
+                    }, 1000);
+                }
+            </script>
+        </div>
     </body>
 </html>
