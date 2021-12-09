@@ -5,7 +5,10 @@ description = "Working with websockets on FastAPI"
 authors = ["Osca Mwongera <oscamwongera@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
+fastapi = "^0.70.0"
+Jinja2 = "^3.0.3"
+uvicorn = "^0.16.0"
 
 [tool.poetry.dev-dependencies]
 
