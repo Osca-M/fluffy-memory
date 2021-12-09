@@ -5,8 +5,10 @@ from fastapi import Request
 from fastapi import WebSocket
 from fastapi.templating import Jinja2Templates
 
+
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
 
 with open('measurements.json', 'r') as file:
     measurements = iter(json.loads(file.read()))
