@@ -23,6 +23,6 @@ def read_root(request: Request):
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(1)
         payload = next(measurements)
         await websocket.send_json(payload)
